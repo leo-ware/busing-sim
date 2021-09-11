@@ -1,4 +1,6 @@
-from src.log import InMemoryLog
+from typing import Optional
+
+from src.log import InMemoryLog, Log
 from src.event_manager import EventManager
 from src.stop import Stop
 from src.bus import Bus
@@ -8,13 +10,13 @@ class Sim:
 
     n_stops = 15
 
-    def __init__(self, n_buses: int, log_factory=InMemoryLog):
+    def __init__(self, n_buses: int, log: Optional[Log] = None):
 
         if n_buses <= 0:
             raise ValueError("n_buses must be strictly positive")
         self.n_buses = n_buses
 
-        self.log = log_factory()
+        self.log = log if log else InMemoryLog()
         self.event_manager = EventManager(self.log)
         self.route = self.create_route()
         self.buses = self.create_buses()
@@ -41,3 +43,4 @@ class Sim:
 
     def run(self, n_steps):
         self.event_manager.run(n_steps)
+        self.log.close()
