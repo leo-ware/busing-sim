@@ -1,3 +1,6 @@
-.pytest_cache
 venv
+.pytest_cache
+__pycache__
 __tests__/.pytest_cache
+__tests__/__pycache__
+src/__pycache__
