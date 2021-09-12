@@ -9,7 +9,6 @@ class Passenger:
     num_ps = 0
 
     def __init__(self, event_manager: EventManager) -> None:
-        event_manager.dispatch(self, "JOIN_QUEUE", 0)
         self.event_manager = event_manager
 
         # assigns a process-unique id to each Passenger
@@ -17,6 +16,8 @@ class Passenger:
         Passenger.num_ps += 1
 
         self.stops_remaining = randint(1, 7)
+
+        self.event_manager.dispatch(self, "JOIN_QUEUE", 0)
 
     def __repr__(self):
         return f"<Passenger id={self.id}>"

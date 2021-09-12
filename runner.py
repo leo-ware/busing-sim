@@ -16,7 +16,7 @@ n_steps: N_STEPS
 
 def run(n_buses: List[int], n_runs: int, n_steps: int):
     path = os.path.join("data", f"sim_" + str(datetime.now()).replace(" ", "_"))
-    os.mkdir(path)
+    os.makedirs(path)
 
     with open(os.path.join(path, "readme.txt"), "a") as f:
         f.write(readme
@@ -31,4 +31,4 @@ def run(n_buses: List[int], n_runs: int, n_steps: int):
 
 
 if __name__ == "__main__":
-    run(n_buses=list(range(1, 31, 2)), n_runs=20, n_steps=50000)
+    run(n_buses=list(range(3, 4)), n_runs=1, n_steps=100)

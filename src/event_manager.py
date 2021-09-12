@@ -1,7 +1,6 @@
 from dataclasses import dataclass
 from queue import PriorityQueue
 from typing import Callable
-from inspect import signature
 
 from src.log import Log, LogRecord
 
@@ -35,7 +34,7 @@ class EventManager:
         self.queue = PriorityQueue()
         self.time = 0
 
-    def dispatch(self, obj: object, action: str, duration: float, callback: Callable = (lambda _: None)) -> None:
+    def dispatch(self, obj: object, action: str, duration: float, callback: Callable = (lambda: None)) -> None:
         """Adds an event to the queue
 
         Args:
@@ -48,11 +47,7 @@ class EventManager:
             raise ValueError("duration must be nonnegative")
 
         def cb(time: float) -> None:
-            if len(signature(callback).parameters):
-                callback(time)
-            else:
-                callback()
-
+            callback()
             self.log.write(LogRecord(time, obj, action, "FINISHED"))
 
         self.log.write(LogRecord(self.time, obj, action, "DISPATCHED"))

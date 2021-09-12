@@ -2,7 +2,7 @@ from pytest import raises
 from random import seed, shuffle
 
 from src.event_manager import EventManager
-from src.log import VoidLog
+from src.log import InMemoryLog, VoidLog
 
 
 def test_validation():
@@ -14,23 +14,24 @@ def test_validation():
 def test_firing_order_loaded_together():
     seed(123)
 
-    sim = EventManager(VoidLog())
+    log = InMemoryLog()
+    ev = EventManager(log)
     nums = list(range(10))
     shuffle(nums)
 
-    log = []
+    calls = []
 
     def make_cb(i):
-        def cb(_):
-            log.append(i)
+        def cb():
+            calls.append(i)
         return cb
 
     for num in nums:
-        sim.dispatch(None, "", num, make_cb(num))
+        ev.dispatch(None, "", num, make_cb(num))
 
-    sim.run(100)
+    ev.run(100)
 
-    assert log == list(range(10))
+    assert calls == list(range(10))
 
 
 def test_firing_order_loaded_dynamically():
