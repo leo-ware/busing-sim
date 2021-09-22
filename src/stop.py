@@ -4,6 +4,8 @@ from collections import deque
 from src.event_manager import EventManager
 from src.passenger import Passenger
 
+QUEUE_LEN_REPORT_FREQUENCY = 10
+
 
 class Stop:
     _stop_num = 0
@@ -70,3 +72,6 @@ class Stop:
             self.passenger_arrives()
 
         self.event_manager.dispatch(self, "PASSENGER_ARRIVAL", execution_time, cb)
+    
+    def report_queue_length(self):
+        self.event_manager.dispatch(self, "REPORT_QUEUE_LENGTH", QUEUE_LEN_REPORT_FREQUENCY, self.report_queue_length)

@@ -20,6 +20,8 @@ class Bus:
         self.passengers: List[Passenger] = []
         self.stop = stop
 
+        self.thing = None
+
         # assigns a process-unique id to each Bus
         self.id = Bus._bus_num
         Bus._bus_num += 1
@@ -53,30 +55,32 @@ class Bus:
 
     def disembark(self):
         """Exit all passengers who belong at the station, then request to embark"""
-        transiting = [p for p in self.passengers if p.stops_remaining == 0]
+        n_passengers = len(self.passengers)
+        disembarking_passengers = tuple(p for p in self.passengers if p.stops_remaining == 0)
         i = 0
 
         def disembark_next():
-            nonlocal i, transiting
+            nonlocal i, disembarking_passengers, n_passengers
 
-            if i < len(transiting):
+            if i < len(disembarking_passengers):
 
                 # note passengers are unloaded in same order as they loaded: FIFO
-                disembarking_passenger = transiting[i]
+                disembarking_passenger = disembarking_passengers[i]
+
                 i += 1
 
                 # hands control to the passenger
                 disembarking_passenger.disembark(
-                    len(self.passengers),
+                    n_passengers - i + 1,
                     disembark_next          # control returned via callback
                 )
 
             else:
-                transiting_set = set(transiting)
+                transiting_set = set(disembarking_passengers)
                 self.passengers = [p for p in self.passengers if p not in transiting_set]
                 self.embark()
 
-        self.event_manager.dispatch(self, "DISEMBARK", 0, disembark_next)
+        self.event_manager.dispatch(self, "BUS_DISEMBARK", 0, disembark_next)
 
     def embark(self):
         """Board passengers, then request to move"""
@@ -93,4 +97,4 @@ class Bus:
             else:
                 self.move()
 
-        self.event_manager.dispatch(self, "EMBARK", 0, embark_next)
+        self.event_manager.dispatch(self, "BUS_EMBARK", 0, embark_next)

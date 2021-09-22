@@ -1,4 +1,4 @@
-from typing import Union, List
+from typing import Union, List, Any
 from dataclasses import dataclass
 from abc import abstractmethod, ABC
 import datetime
@@ -7,10 +7,12 @@ import os
 
 @dataclass(frozen=True)
 class LogRecord:
+    id: int
     time: Union[float, int]
     obj: object
     action: str
     status: str
+    data: Any = None
 
 
 class Log(ABC):
@@ -45,14 +47,14 @@ class CSVLog(Log):
             self.f_name = os.path.join(path, self.f_name)
 
         with open(self.f_name, "a") as f:
-            f.write("time,type,id,action,status\n")
+            f.write("event_id,time,object_type,object_id,action,status,data\n")
 
     def write_to_file(self):
         with open(self.f_name, "a") as f:
             f.write("\n".join([
-                f"{r.time},{r.obj.__class__.__name__},{r.obj.id},{r.action},{r.status}"
+                f"{r.id},{r.time},{r.obj.__class__.__name__},{r.obj.id},{r.action},{r.status},{r.data}"
                 for r in self.log
-            ]))
+            ]) + "\n")
         self.log = []
 
     def write(self, record: LogRecord) -> None:

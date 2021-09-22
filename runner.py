@@ -31,4 +31,4 @@ def run(n_buses: List[int], n_runs: int, n_steps: int):
 
 
 if __name__ == "__main__":
-    run(n_buses=list(range(3, 4)), n_runs=1, n_steps=100)
+    run(n_buses=[15], n_runs=1, n_steps=10000)

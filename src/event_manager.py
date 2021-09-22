@@ -30,11 +30,17 @@ class EventManager:
         Args:
             log: a log object
         """
+        self._n_dispatches = 1000
         self.log = log
         self.queue = PriorityQueue()
-        self.time = 0
+        self._time = 0
 
-    def dispatch(self, obj: object, action: str, duration: float, callback: Callable = (lambda: None)) -> None:
+    @property
+    def time(self):
+        """getter for self._time, protects value from accidental tampering"""
+        return self._time
+
+    def dispatch(self, obj: object, action: str, duration: float, callback: Callable = (lambda: None), data=None) -> None:
         """Adds an event to the queue
 
         Args:
@@ -46,11 +52,14 @@ class EventManager:
         if duration < 0:
             raise ValueError("duration must be nonnegative")
 
+        event_id = self._n_dispatches
+        self._n_dispatches += 1
+
         def cb(time: float) -> None:
             callback()
-            self.log.write(LogRecord(time, obj, action, "FINISHED"))
+            self.log.write(LogRecord(event_id, time, obj, action, "FINISHED", data))
 
-        self.log.write(LogRecord(self.time, obj, action, "DISPATCHED"))
+        self.log.write(LogRecord(event_id, self.time, obj, action, "DISPATCHED", data))
 
         self.queue.put(Event(
             time=self.time + duration,
@@ -60,7 +69,7 @@ class EventManager:
     def next(self) -> None:
         """Move the sim clock forward until the next event finishes and execute callback"""
         task = self.queue.get()
-        self.time = task.time
+        self._time = task.time
         task.callback(self.time)
 
     def run(self, max_events: int = 10000) -> None:

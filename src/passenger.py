@@ -15,6 +15,7 @@ class Passenger:
         self.id = Passenger.num_ps
         Passenger.num_ps += 1
 
+        self.initialization_time = event_manager.time
         self.stops_remaining = randint(1, 7)
 
         self.event_manager.dispatch(self, "JOIN_QUEUE", 0)
@@ -26,15 +27,16 @@ class Passenger:
         return self.id
 
     def disembark(self, n_passengers: int, callback: Callable):
-        if n_passengers < 0:
-            raise ValueError("n_passengers must be nonnegative")
+        if n_passengers <= 0:
+            raise ValueError("n_passengers must be positive")
 
-        execution_time = max(0, stats.norm.rvs(scale=0.01*n_passengers**0.5, loc=0.03*n_passengers))
-        self.event_manager.dispatch(self, "DISEMBARK", execution_time, callback)
+        execution_time = max(0, stats.norm.rvs(scale=0.01*(n_passengers**0.5), loc=0.03*n_passengers))
+        total_transit_time = (self.event_manager.time + execution_time) - self.initialization_time
+        self.event_manager.dispatch(self, "PASSENGER_DISEMBARK", execution_time, callback, total_transit_time)
 
     def embark(self, n_passengers: int, callback: Callable):
         if n_passengers < 0:
             raise ValueError("n_passengers must be nonnegative")
 
-        execution_time = max(0, stats.norm.rvs(scale=0.01*n_passengers**0.5, loc=0.05*n_passengers))
-        self.event_manager.dispatch(self, "EMBARK", execution_time, callback)
+        execution_time = max(0, stats.norm.rvs(scale=0.01*(n_passengers**0.5), loc=0.05*n_passengers))
+        self.event_manager.dispatch(self, "PASSENGER_EMBARK", execution_time, callback)
