@@ -84,7 +84,7 @@ def test_embark():
         p.stops_remaining = float("inf")
 
     bus.embark()
-    ev.run()
+    ev.run(1000)
 
     assert len(bus.passengers) == 130
     assert len(stop.passengers_waiting) == 5

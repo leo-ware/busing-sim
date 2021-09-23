@@ -41,6 +41,7 @@ class Sim:
         for stop in self.route:
             stop.start()
 
-    def run(self, n_steps):
-        self.event_manager.run(n_steps)
+    def run(self, *args, **kwargs):
+        """Run the event manager and then close the log, forwards arguments to EventManager.run()"""
+        self.event_manager.run(*args, **kwargs)
         self.log.close()

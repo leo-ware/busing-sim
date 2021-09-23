@@ -72,14 +72,15 @@ class EventManager:
         self._time = task.time
         task.callback(self.time)
 
-    def run(self, max_events: int = 10000) -> None:
+    def run(self, max_events=float("inf"), stop_time=float("inf")) -> None:
         """Run the simulation
 
         Args:
             max_events: only run this many events at maximum
+            stop_time: stop after this many game minutes have elapsed
         """
         i = 0
-        while not self.queue.empty():
+        while not self.queue.empty() and self.time < stop_time:
             self.next()
             i += 1
             if i >= max_events:
