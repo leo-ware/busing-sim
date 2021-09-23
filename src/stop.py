@@ -1,5 +1,6 @@
 from scipy import stats
 from collections import deque
+from math import cos, pi, floor
 
 from src.event_manager import EventManager
 from src.passenger import Passenger
@@ -56,6 +57,23 @@ class Stop:
         self.bus_loading = None
         self.load()
 
+    def expected_arrival_interval(self, time):
+        """Calculates the expected time between passenger arrivals, as a function of sim time
+
+        We get the time of day from the sim time by dividing by sixty (minutes -> hours), removing the decimal (hours +
+        minutes -> hours) and then moding by 24 (sim hours -> time of day). This assumes the simulation starts at
+        midnight. The interval between successive arrivals is determined by the time of day according to the formula:
+
+        $$
+        {1 \over 1.2 + \cos(\pi (t - 7) / 6)}
+        $$
+
+        This is a distorted cosine wave that simulates a "rush hour" every day in the hours around 7am and 7pm, when the
+        time between successive arrivals gets very low.
+        """
+        time_in_hours = floor(time / 60) % 24
+        return 1/(1.2 + cos(pi * (time_in_hours - 7) / 6))
+
     def passenger_arrives(self) -> None:
         """Method to manager passenger arrivals
 
@@ -64,7 +82,10 @@ class Stop:
             - adds it to this stop
             - calls this method, causing the process to repeat
         """
-        execution_time = stats.expon.rvs(scale=1)
+
+        # execution time varies by time of day
+
+        execution_time = stats.expon.rvs(scale=self.expected_arrival_interval(self.event_manager.time))
 
         def cb():
             passenger = Passenger(self.event_manager)

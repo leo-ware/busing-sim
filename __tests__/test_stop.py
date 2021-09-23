@@ -1,6 +1,6 @@
 from src.stop import Stop
 from src.event_manager import EventManager
-from src.log import InMemoryLog
+from src.log import InMemoryLog, VoidLog
 
 
 def test_passenger_arrival():
@@ -34,3 +34,11 @@ def test_load():
 
     stop.park(bus)
     assert disembarked
+
+
+def test_expected_arrival_interval():
+    stop = Stop(EventManager(VoidLog()))
+    assert stop.expected_arrival_interval(7*60) < stop.expected_arrival_interval(12*60)
+    assert stop.expected_arrival_interval(1 * 60) == stop.expected_arrival_interval(25 * 60)
+    assert stop.expected_arrival_interval(7 * 60) == stop.expected_arrival_interval(19 * 60)
+    assert stop.expected_arrival_interval(7.1 * 60) == stop.expected_arrival_interval(19 * 60)
