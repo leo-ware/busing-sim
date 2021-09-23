@@ -39,7 +39,7 @@ class Sim:
         for bus in self.buses:
             bus.move()
         for stop in self.route:
-            stop.passenger_arrives()
+            stop.start()
 
     def run(self, n_steps):
         self.event_manager.run(n_steps)

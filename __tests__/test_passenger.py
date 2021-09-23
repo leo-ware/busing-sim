@@ -18,7 +18,7 @@ def test_fires_callback():
         p.disembark(-1, cb)
 
     flag = False
-    p.disembark(0, cb)
+    p.disembark(1, cb)
     ev.run(100)
     assert flag
 
@@ -47,4 +47,4 @@ def test_dispatches_events():
     p = Passenger(ev)
     p.disembark(1, lambda: None)
     p.embark(1000, lambda: None)
-    assert [record.action for record in log.log] == ["JOIN_QUEUE", "DISEMBARK", "EMBARK"]
+    assert [record.action for record in log.log] == ["JOIN_QUEUE", "PASSENGER_DISEMBARK", "PASSENGER_EMBARK"]

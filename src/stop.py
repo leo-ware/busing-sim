@@ -74,4 +74,8 @@ class Stop:
         self.event_manager.dispatch(self, "PASSENGER_ARRIVAL", execution_time, cb)
     
     def report_queue_length(self):
-        self.event_manager.dispatch(self, "REPORT_QUEUE_LENGTH", QUEUE_LEN_REPORT_FREQUENCY, self.report_queue_length)
+        self.event_manager.dispatch(self, "REPORT_QUEUE_LENGTH", QUEUE_LEN_REPORT_FREQUENCY, self.report_queue_length, len(self.passengers_waiting))
+    
+    def start(self):
+        self.passenger_arrives()
+        self.report_queue_length()
