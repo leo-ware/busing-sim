@@ -42,18 +42,20 @@ def test_move():
 
 
 def test_disembark():
-    log = InMemoryLog()
-    ev = EventManager(log)
+    ev = EventManager(VoidLog())
     stop = Stop(ev)
     bus = Bus(ev, stop)
 
-    bus.passengers = [Passenger(ev) for _ in range(5)]
+    bus.passengers = [Passenger(ev, stop) for _ in range(5)]
     for i, p in enumerate(bus.passengers):
         p.id = i
         p.stops_remaining = i % 3
+        p.has_embarked = True  # prevent early departures
 
     # run initialization for passengers
-    ev.run(5)
+    ev.run(10)
+
+    # disembark people
     bus.disembark()
     ev.run(3)
 
@@ -70,8 +72,13 @@ def test_embark():
     stop.next = stop
     bus = Bus(ev, stop)
 
-    stop.passengers_waiting = [Passenger(ev) for _ in range(10)]
-    bus.passengers = [Passenger(ev) for _ in range(125)]
+    stop.passengers_waiting = [Passenger(ev, stop) for _ in range(10)]
+
+    # prevents passengers from getting bored and leaving
+    for p in stop.passengers_waiting:
+        p.has_embarked = True
+
+    bus.passengers = [Passenger(ev, stop) for _ in range(125)]
 
     for p in stop.passengers_waiting + bus.passengers:
         p.stops_remaining = float("inf")

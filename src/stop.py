@@ -88,11 +88,19 @@ class Stop:
         execution_time = stats.expon.rvs(scale=self.expected_arrival_interval(self.event_manager.time))
 
         def cb():
-            passenger = Passenger(self.event_manager)
+            passenger = Passenger(self.event_manager, self)
             self.passengers_waiting.appendleft(passenger)
             self.passenger_arrives()
 
         self.event_manager.dispatch(self, "PASSENGER_ARRIVAL", execution_time, cb)
+
+    def remove_passenger(self, passenger: Passenger):
+        # error handling here to make mocking easier in tests
+        try:
+            # O(n) to remove, but queue length should stay small
+            self.passengers_waiting.remove(passenger)
+        except ValueError:
+            pass
     
     def report_queue_length(self):
         self.event_manager.dispatch(self, "REPORT_QUEUE_LENGTH", QUEUE_LEN_REPORT_FREQUENCY, self.report_queue_length, len(self.passengers_waiting))
