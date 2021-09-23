@@ -1,5 +1,7 @@
-from src.sim import Sim
 import pytest
+
+from src.sim import Sim
+from src.actions import BUS_MOVE
 
 
 def test_init():
@@ -9,7 +11,7 @@ def test_init():
     assert len(set([bus.stop for bus in sim.buses])) == 15
 
     # all the buses have been told to move
-    assert len(set([record.obj.id for record in sim.log.log if record.action == "MOVE"])) == 15
+    assert len(set([record.obj.id for record in sim.log.log if record.action == BUS_MOVE])) == 15
 
     # route setup
     assert set(sim.route) == set([stop.next for stop in sim.route])

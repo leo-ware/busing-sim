@@ -4,6 +4,7 @@ from src.log import InMemoryLog
 from src.event_manager import EventManager
 from src.passenger import Passenger
 from src.stop import Stop
+from src.actions import PASSENGER_JOIN_QUEUE, PASSENGER_EMBARK, PASSENGER_DISEMBARK
 
 
 def test_fires_callback():
@@ -48,4 +49,4 @@ def test_dispatches_events():
     p = Passenger(ev, Stop(ev))
     p.disembark(1, lambda: None)
     p.embark(1000, lambda: None)
-    assert [record.action for record in log.log] == ["JOIN_QUEUE", "PASSENGER_DISEMBARK", "PASSENGER_EMBARK"]
+    assert [record.action for record in log.log] == [PASSENGER_JOIN_QUEUE, PASSENGER_DISEMBARK, PASSENGER_EMBARK]

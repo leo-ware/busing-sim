@@ -3,7 +3,7 @@ import os
 from datetime import datetime
 from time import time
 
-from src.log import CSVLog
+from src.log import CSVLog, LogFilter
 from src.sim import Sim
 
 readme = """
@@ -29,11 +29,15 @@ def run(n_buses: List[int], n_runs: int, sim_duration: int):
 
     for bus_i in n_buses:
         for run_i in range(n_runs):
-            sim = Sim(n_buses=bus_i, log=CSVLog(path=path, msg=f"{bus_i}_{run_i}_"))
+            log = LogFilter(
+                CSVLog(path=path, msg=f"{bus_i}_{run_i}_"),
+                keep=lambda r: r.action not in {}
+                )
+            sim = Sim(n_buses=bus_i, log=log)
             sim.run(stop_time=sim_duration)
     
     print(f"success! run completed in {(time() - start_time)/60} minutes")
 
 
 if __name__ == "__main__":
-    run(n_buses=[15], n_runs=1, sim_duration=24*60)
+    run(n_buses=[5], n_runs=1, sim_duration=2*60)

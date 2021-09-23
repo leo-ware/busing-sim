@@ -1,4 +1,4 @@
-from typing import Union, List, Any
+from typing import Callable, Union, List, Any
 from dataclasses import dataclass
 from abc import abstractmethod, ABC
 import datetime
@@ -64,3 +64,16 @@ class CSVLog(Log):
 
     def close(self) -> None:
         self.write_to_file()
+
+
+class LogFilter(Log):
+    def __init__(self, base_log: Log, keep: Callable[[LogRecord], bool]):
+        self.keep = keep
+        self.base_log = base_log
+    
+    def write(self, record: LogRecord) -> None:
+        if self.keep(record):
+            self.base_log.write(record)
+    
+    def close(self) -> None:
+        return self.base_log.close()

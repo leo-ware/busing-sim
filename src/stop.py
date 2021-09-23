@@ -4,6 +4,7 @@ from math import cos, pi, floor
 
 from src.event_manager import EventManager
 from src.passenger import Passenger
+from src.actions import STOP_PASSENGER_JOIN, STOP_REPORT_QUEUE_LENGTH
 
 QUEUE_LEN_REPORT_FREQUENCY = 10
 
@@ -92,7 +93,7 @@ class Stop:
             self.passengers_waiting.appendleft(passenger)
             self.passenger_arrives()
 
-        self.event_manager.dispatch(self, "PASSENGER_ARRIVAL", execution_time, cb)
+        self.event_manager.dispatch(self, STOP_PASSENGER_JOIN, execution_time, cb)
 
     def remove_passenger(self, passenger: Passenger):
         # error handling here to make mocking easier in tests
@@ -103,7 +104,7 @@ class Stop:
             pass
     
     def report_queue_length(self):
-        self.event_manager.dispatch(self, "REPORT_QUEUE_LENGTH", QUEUE_LEN_REPORT_FREQUENCY, self.report_queue_length, len(self.passengers_waiting))
+        self.event_manager.dispatch(self, STOP_REPORT_QUEUE_LENGTH, QUEUE_LEN_REPORT_FREQUENCY, self.report_queue_length, len(self.passengers_waiting))
     
     def start(self):
         self.passenger_arrives()
