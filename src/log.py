@@ -38,7 +38,7 @@ class InMemoryLog(Log):
 
 
 class CSVLog(Log):
-    def __init__(self, path="", msg="", buffer_size=1000):
+    def __init__(self, path="", msg="", buffer_size=10000):
         self.buffer_size = buffer_size
         self.log = []
 

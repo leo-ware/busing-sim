@@ -6,6 +6,7 @@ from src.event_manager import EventManager
 from src.passenger import Passenger
 from src.actions import STOP_PASSENGER_JOIN, STOP_REPORT_QUEUE_LENGTH
 
+# how frequently to sample the queue length
 QUEUE_LEN_REPORT_FREQUENCY = 10
 
 
@@ -92,6 +93,7 @@ class Stop:
             passenger = Passenger(self.event_manager, self)
             self.passengers_waiting.appendleft(passenger)
             self.passenger_arrives()
+            return len(self.passengers_waiting)
 
         self.event_manager.dispatch(self, STOP_PASSENGER_JOIN, execution_time, cb)
 

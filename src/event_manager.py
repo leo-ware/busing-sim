@@ -56,8 +56,8 @@ class EventManager:
         self._n_dispatches += 1
 
         def cb(time: float) -> None:
-            callback()
-            self.log.write(LogRecord(event_id, time, obj, action, "FINISHED", data))
+            cb_return = callback()
+            self.log.write(LogRecord(event_id, time, obj, action, "FINISHED", cb_return))
 
         self.log.write(LogRecord(event_id, self.time, obj, action, "DISPATCHED", data))
 

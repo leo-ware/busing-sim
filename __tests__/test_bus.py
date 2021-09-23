@@ -1,3 +1,4 @@
+from src.actions import BUS_MOVE, PASSENGER_DISEMBARK
 from src.event_manager import EventManager
 from src.log import VoidLog, InMemoryLog
 from src.bus import Bus
@@ -57,8 +58,14 @@ def test_disembark():
 
     # disembark people
     bus.disembark()
-    ev.run(3)
 
+    # keep firing actions until we hit an invalid one
+    try:
+        ev.run(5)
+    except AttributeError:
+        pass
+
+    # make sure we disembarked the right people
     id_set = set([p.id for p in bus.passengers])
     assert 0 not in id_set
     assert 3 not in id_set

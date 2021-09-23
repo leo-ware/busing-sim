@@ -5,6 +5,7 @@ from time import time
 
 from src.log import CSVLog, LogFilter
 from src.sim import Sim
+from src.actions import BUS_MOVE
 
 readme = """
 About this simulation:
@@ -29,10 +30,10 @@ def run(n_buses: List[int], n_runs: int, sim_duration: int):
 
     for bus_i in n_buses:
         for run_i in range(n_runs):
-            log = LogFilter(
-                CSVLog(path=path, msg=f"{bus_i}_{run_i}_"),
-                keep=lambda r: r.action not in {}
-                )
+
+            log=CSVLog(path=path, msg=f"{bus_i}_{run_i}")
+            log = LogFilter(log, keep=lambda r: r.action != BUS_MOVE)
+
             sim = Sim(n_buses=bus_i, log=log)
             sim.run(stop_time=sim_duration)
     

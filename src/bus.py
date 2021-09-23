@@ -3,7 +3,7 @@ from typing import List
 
 from src.event_manager import EventManager
 from src.passenger import Passenger
-from src.actions import BUS_DISEMBARK, BUS_EMBARK, BUS_MOVE
+from src.actions import BUS_MOVE
 
 
 class Bus:
@@ -81,7 +81,7 @@ class Bus:
                 self.passengers = [p for p in self.passengers if p not in transiting_set]
                 self.embark()
 
-        self.event_manager.dispatch(self, BUS_DISEMBARK, 0, disembark_next)
+        disembark_next()
 
     def embark(self):
         """Board passengers, then request to move"""
@@ -98,4 +98,4 @@ class Bus:
             else:
                 self.move()
 
-        self.event_manager.dispatch(self, BUS_EMBARK, 0, embark_next)
+        embark_next()
